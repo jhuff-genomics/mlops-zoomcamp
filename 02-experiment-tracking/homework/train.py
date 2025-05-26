@@ -20,6 +20,8 @@ def load_pickle(filename: str):
 )
 def run_train(data_path: str):
 
+    mlflow.set_tracking_uri("sqlite:///mlops-zoomcamp-mlflow.db")
+    mlflow.set_experiment("nyc-taxi-experiment")
     mlflow.autolog()
 
     with mlflow.start_run():
