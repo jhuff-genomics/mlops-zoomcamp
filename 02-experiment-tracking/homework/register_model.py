@@ -79,7 +79,8 @@ def run_register_model(data_path: str, top_n: int):
     )[0]
 
     # Register the best model
-    mlflow.register_model(best_run.info.run_id, "nyc-bestest-rmse")
+    mlflow.register_model(model_uri=f"runs:/{best_run.info.run_id}/models",
+                          name="nyc-bestest-rmse")
 
 
 if __name__ == '__main__':
