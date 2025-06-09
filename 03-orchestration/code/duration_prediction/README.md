@@ -8,7 +8,7 @@ $ databricks bundle init
 $ databricks bundle generate job --existing_job_id {job_id}
 $ databricks bundle validate
 ```
-Some redactions were made and `databricks.yml` with account into is also necessary.
+Some redactions were made for infosec, and `databricks.yml` from `bundle init` above or `configure` below is also required for account info to generate the job config, validate it and deploy below.
 
 
 ## Getting started
