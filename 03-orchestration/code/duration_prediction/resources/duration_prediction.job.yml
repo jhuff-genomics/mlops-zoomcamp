@@ -1,0 +1,21 @@
+resources:
+  jobs:
+    duration_prediction:
+      name: duration-prediction
+      tasks:
+        - task_key: duration-prediction
+          existing_cluster_id: {redacted}
+          email_notifications: {}
+          run_if: ALL_SUCCESS
+          spark_python_task:
+            parameters:
+              - --year
+              - "2023"
+              - --month
+              - "03"
+            python_file: /Repos/{redacted}/mlops-zoomcamp/03-orchestration/code/duration-prediction.py
+      email_notifications: {}
+      max_concurrent_runs: 1
+      queue:
+        enabled: true
+      webhook_notifications: {}
