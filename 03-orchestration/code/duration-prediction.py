@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import pickle
+#import pickle
 #from pathlib import Path
 
 import pandas as pd
@@ -21,7 +21,7 @@ mlflow.set_experiment("/nyc-taxi-experiment")
 
 
 def read_dataframe(year, month):
-    url = f'https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_{year}-{month:02d}.parquet'
+    url = f'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{year}-{month:02d}.parquet'
     df = pd.read_parquet(url)
 
     df['duration'] = df.lpep_dropoff_datetime - df.lpep_pickup_datetime
@@ -80,9 +80,9 @@ def train_model(X_train, y_train, X_val, y_val, dv):
         rmse = root_mean_squared_error(y_val, y_pred)
         mlflow.log_metric("rmse", rmse)
 
-        with open("preprocessor.b", "wb") as f_out:
-            pickle.dump(dv, f_out)
-        mlflow.log_artifact("preprocessor.b", artifact_path="preprocessor")
+#        with open("preprocessor.b", "wb") as f_out:
+#            pickle.dump(dv, f_out)
+#        mlflow.log_artifact("preprocessor.b", artifact_path="preprocessor")
 
         mlflow.xgboost.log_model(booster, artifact_path="models_mlflow")
 
