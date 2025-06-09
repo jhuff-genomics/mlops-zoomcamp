@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import pickle
-from pathlib import Path
+#from pathlib import Path
 
 import pandas as pd
 import xgboost as xgb
@@ -13,7 +13,7 @@ from sklearn.metrics import root_mean_squared_error
 import mlflow
 
 mlflow.set_tracking_uri("databricks")
-mlflow.set_experiment("nyc-taxi-experiment")
+mlflow.set_experiment("/nyc-taxi-experiment")
 
 #models_folder = Path('models')
 #models_folder.mkdir(exist_ok=True)
@@ -80,9 +80,9 @@ def train_model(X_train, y_train, X_val, y_val, dv):
         rmse = root_mean_squared_error(y_val, y_pred)
         mlflow.log_metric("rmse", rmse)
 
- #       with open("models/preprocessor.b", "wb") as f_out:
- #           pickle.dump(dv, f_out)
-        mlflow.log_artifact("models/preprocessor.b", artifact_path="preprocessor")
+        with open("preprocessor.b", "wb") as f_out:
+            pickle.dump(dv, f_out)
+        mlflow.log_artifact("preprocessor.b", artifact_path="preprocessor")
 
         mlflow.xgboost.log_model(booster, artifact_path="models_mlflow")
 
