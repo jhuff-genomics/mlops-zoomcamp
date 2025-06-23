@@ -14,7 +14,7 @@ from prefect import task, flow
 from evidently import Report
 from evidently import DataDefinition
 from evidently import Dataset
-from evidently.metrics import ValueDrift, DriftedColumnsCount, MissingValueCount
+from evidently.metrics import ValueDrift, DriftedColumnsCount, MissingValueCount, QuantileValue, StdValue
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s]: %(message)s")
 
@@ -27,7 +27,9 @@ create table dummy_metrics(
 	timestamp timestamp,
 	prediction_drift float,
 	num_drifted_columns integer,
-	share_missing_values float
+	share_missing_values float,
+	fare_amount float,
+	std_fare_amount float
 )
 """
 
@@ -35,9 +37,9 @@ reference_data = pd.read_parquet('data/reference.parquet')
 with open('models/lin_reg.bin', 'rb') as f_in:
 	model = joblib.load(f_in)
 
-raw_data = pd.read_parquet('data/green_tripdata_2022-02.parquet')
+raw_data = pd.read_parquet('data/green_tripdata_2024-03.parquet')
 
-begin = datetime.datetime(2022, 2, 1, 0, 0)
+begin = datetime.datetime(2024, 3, 1, 0, 0)
 num_features = ['passenger_count', 'trip_distance', 'fare_amount', 'total_amount']
 cat_features = ['PULocationID', 'DOLocationID']
 data_definition = DataDefinition(
@@ -49,6 +51,8 @@ report = Report(metrics = [
     ValueDrift(column='prediction'),
     DriftedColumnsCount(),
     MissingValueCount(column='prediction'),
+	QuantileValue(column='fare_amount', quantile=0.5),
+	StdValue(column='fare_amount')
 ])
 
 
@@ -83,11 +87,13 @@ def calculate_metrics_postgresql(i):
 	prediction_drift = result['metrics'][0]['value']
 	num_drifted_columns = result['metrics'][1]['value']['count']
 	share_missing_values = result['metrics'][2]['value']['share']
+	fare_amount = result['metrics'][3]['value']
+	std_fare_amount = result['metrics'][4]['value']
 	with psycopg.connect(CONNECTION_STRING_DB, autocommit=True) as conn:
 		with conn.cursor() as curr:
 			curr.execute(
-				"insert into dummy_metrics(timestamp, prediction_drift, num_drifted_columns, share_missing_values) values (%s, %s, %s, %s)",
-				(begin + datetime.timedelta(i), prediction_drift, num_drifted_columns, share_missing_values)
+				"insert into dummy_metrics(timestamp, prediction_drift, num_drifted_columns, share_missing_values, fare_amount, std_fare_amount) values (%s, %s, %s, %s, %s, %s)",
+				(begin + datetime.timedelta(i), prediction_drift, num_drifted_columns, share_missing_values, fare_amount, std_fare_amount)
 			)
 
 @flow
