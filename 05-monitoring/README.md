@@ -15,6 +15,7 @@ Note: all actions expected to be executed in repo folder.
 - Create virtual environment: `uv venv --python 3.12`
 - Activate venv: `source .venv/bin/activate`
 - Install required packages: `uv pip install -r requirements.txt`
+- We still need `prefect`, so run `uv pip install ruamel.yaml==0.17.21` and then `up pip install prefect`
 - Run `baseline_model_nyc_taxi_data.ipynb` for downloading datasets, training model and creating reference dataset 
 
 
