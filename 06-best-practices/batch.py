@@ -1,25 +1,9 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 import sys
 import pickle
 import pandas as pd
 
 
-year = int(sys.argv[1])
-month = int(sys.argv[2])
-
-input_file = f'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{year:04d}-{month:02d}.parquet'
-output_file = f'output/yellow_tripdata_{year:04d}-{month:02d}.parquet'
-
-
-with open('model.bin', 'rb') as f_in:
-    dv, lr = pickle.load(f_in)
-
-
-categorical = ['PULocationID', 'DOLocationID']
-
-def read_data(filename):
+def read_data(filename, categorical):
     df = pd.read_parquet(filename)
     
     df['duration'] = df.tpep_dropoff_datetime - df.tpep_pickup_datetime
@@ -31,10 +15,19 @@ def read_data(filename):
     
     return df
 
-def main():
+
+def main(year, month):
+
+    input_file = f'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{year:04d}-{month:02d}.parquet'
+    output_file = f'yellow_tripdata_{year:04d}-{month:02d}.parquet'
     
-    df = read_data(input_file)
+    categorical=['PULocationID', 'DOLocationID']
+
+    df = read_data(input_file, categorical)
     df['ride_id'] = f'{year:04d}/{month:02d}_' + df.index.astype('str')
+
+    with open('model.bin', 'rb') as f_in:
+        dv, lr = pickle.load(f_in)
 
     dicts = df[categorical].to_dict(orient='records')
     X_val = dv.transform(dicts)
@@ -51,4 +44,6 @@ def main():
 
     
 if __name__ == "__main__":
-    main()
+    year = int(sys.argv[1])
+    month = int(sys.argv[2])
+    main(year, month)
