@@ -20,3 +20,8 @@ python batch.py 2023 03
 ```bash
 uv pip install pytest
 ```
+
+## Add localstack
+```bash
+uv pip install localstack
+```
