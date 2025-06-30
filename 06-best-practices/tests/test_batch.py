@@ -3,6 +3,7 @@ import pandas as pd
 
 import batch
 
+
 def dt(hour, minute, second=0):
     return datetime(2023, 1, 1, hour, minute, second)
 
@@ -17,20 +18,17 @@ def test_prepare_data():
 
     columns = ['PULocationID', 'DOLocationID', 'tpep_pickup_datetime', 'tpep_dropoff_datetime']
     df = pd.DataFrame(data, columns=columns)
-
-    df['duration'] = (df['tpep_dropoff_datetime'] - df['tpep_pickup_datetime']).dt.total_seconds() / 60
-    columns = ['PULocationID', 'DOLocationID', 'tpep_pickup_datetime', 'tpep_dropoff_datetime']
+ 
     df = pd.DataFrame(data, columns=columns)
     df_prepared = batch.prepare_data(df, ['PULocationID', 'DOLocationID'])
 
     data_expected = [
-    (None, None, dt(1, 1), dt(1, 10), (9)),
-    (1, 1, dt(1, 2), dt(1, 10), (8))    
+    (str(int(-1)), str(int(-1)), datetime(2023, 1, 1, 1, 1, 0), datetime(2023, 1, 1, 1, 10, 0), (9.0)),
+    (str(int(1)), str(int(1)), datetime(2023, 1, 1, 1, 2, 0), datetime(2023, 1, 1, 1, 10, 0), (8.0))
     ]
 
     columns_expected = ['PULocationID', 'DOLocationID', 'tpep_pickup_datetime', 'tpep_dropoff_datetime', 'duration']
     df_expected = pd.DataFrame(data_expected, columns=columns_expected)
-    df_expected = batch.prepare_data(df, ['PULocationID', 'DOLocationID'])
 
     assert df_prepared.shape == (2, 5)
     assert df_prepared.equals(df_expected)
