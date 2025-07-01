@@ -25,3 +25,18 @@ uv pip install pytest
 ```bash
 uv pip install localstack
 ```
+
+## Docker Compose S3 localstack service
+```bash
+docker-compose up -d s3
+```
+
+## Check localstack S3 buckets
+```bash
+aws --endpoint-url=http://localhost:4566 s3 ls
+```
+
+## Make localstack S3 bucket
+```bash
+aws --endpoint-url=http://localhost:4566 s3 mb s3://bucket
+```
