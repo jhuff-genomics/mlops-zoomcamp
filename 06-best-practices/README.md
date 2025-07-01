@@ -47,3 +47,9 @@ cd ../
 pytest tests/test_integration.py
 aws --endpoint-url=$S3_ENDPOINT_URL s3 ls s3://bucket/
 ```
+
+## Shut down Docker Compose
+```bash
+cd 06-best-practices/
+docker-compose down
+```
