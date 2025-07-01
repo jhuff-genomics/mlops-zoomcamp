@@ -40,3 +40,9 @@ aws --endpoint-url=http://localhost:4566 s3 ls
 ```bash
 aws --endpoint-url=http://localhost:4566 s3 mb s3://bucket
 ```
+
+## Run integration tests
+```bash
+pytest tests/test_integration.py
+aws --endpoint-url=$S3_ENDPOINT_URL s3 ls s3://bucket/
+```
